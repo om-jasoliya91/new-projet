@@ -4,7 +4,7 @@ import axios from 'axios'
 export const useUserStore = defineStore('userStore', () => {
   const registerUser = async (formData) => {
     try {
-      const res = await axios.post('http://127.0.0.1:8000/api/register', formData)
+      const res = await axios.post('api/register', formData)
 
       return { success: true, data: res.data }
     } catch (error) {
@@ -13,7 +13,7 @@ export const useUserStore = defineStore('userStore', () => {
   }
   const loginUser = async (credentials) => {
     try {
-      const res = await axios.post('http://127.0.0.1:8000/api/login', credentials)
+      const res = await axios.post('api/login', credentials)
       localStorage.setItem('token', res.data.token)
       return { success: true, data: res.data }
     } catch (error) {

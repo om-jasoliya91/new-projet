@@ -7,22 +7,22 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const userStore = useUserStore()
 
-// ⭐ Validation Schema (YUP)
+// Validation Schema (YUP)
 const schema = yup.object({
   email: yup.string().email('Invalid Email').required('Email is required'),
   password: yup.string().required('Password is required'),
 })
 
-// ⭐ useForm (connect schema)
+//  useForm (connect schema)
 const { handleSubmit, resetForm } = useForm({
   validationSchema: schema,
 })
 
-// ⭐ Fields
+// Fields
 const { value: email, errorMessage: emailError } = useField('email')
 const { value: password, errorMessage: passwordError } = useField('password')
 
-// ⭐ Submit Handler
+//Submit Handler
 const submitLogin = handleSubmit(async () => {
   const credentials = {
     email: email.value,
@@ -34,7 +34,7 @@ const submitLogin = handleSubmit(async () => {
   if (result.success) {
     alert('Login Successful!')
     resetForm()
-    router.push('/') // redirect after login
+    router.push('/home') // redirect after login
   } else {
     alert(result.error?.message ?? 'Invalid credentials!')
   }
@@ -66,6 +66,9 @@ const submitLogin = handleSubmit(async () => {
       </div>
 
       <button type="submit" class="btn btn-primary w-100">Login</button>
+      <div class="mb-3 text-center">
+        <router-link to="/">Create New Account? Register here</router-link>
+      </div>
     </form>
   </div>
 </template>

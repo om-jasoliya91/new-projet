@@ -128,6 +128,9 @@ const submitForm = handleSubmit(async () => {
 
       <!-- SUBMIT -->
       <button class="btn btn-primary w-100">Submit</button>
+      <div class="mb-3 text-center">
+        <router-link to="/login">Do You have Account? Login here</router-link>
+      </div>
     </form>
   </div>
 </template>
