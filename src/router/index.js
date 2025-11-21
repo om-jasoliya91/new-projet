@@ -6,12 +6,20 @@ import HomeView from '@/components/pages/Dashboard/HomeView.vue'
 const routes = [
   { path: '/', name: 'register', component: RegisterView },
   { path: '/login', name: 'login', component: LoginView },
-  { path: '/home', name: 'home', component: HomeView },
+  { path: '/home', name: 'home', component: HomeView, meta: { requiresAuth: true } },
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+// beforeEach is a Global Navigation Guard in Vue Router.Run this function BEFORE every route change.
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+  if (to.meta.requiresAuth && !token) {
+    return next('/login')
+  }
+  next()
 })
 
 export default router
