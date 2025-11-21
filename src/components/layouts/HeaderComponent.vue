@@ -19,7 +19,7 @@
             <router-link class="nav-link active" to="/home">Home</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/home">Courses</router-link>
+            <router-link class="nav-link" to="/course">Courses</router-link>
           </li>
           <li class="nav-item dropdown">
             <a
@@ -32,8 +32,13 @@
               Actions
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" @click="handleLogout">Logout</a></li>
-              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li>
+                <a class="dropdown-item" @click="handleLogout">Logout</a>
+                <!-- <router-link class="dropdown-item" @click="handleLogout">Logout</router-link> -->
+              </li>
+              <li>
+                <router-link class="dropdown-item" to="/profile">Profile</router-link>
+              </li>
             </ul>
           </li>
         </ul>

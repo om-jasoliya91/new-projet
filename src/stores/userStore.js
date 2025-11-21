@@ -46,7 +46,7 @@ export const useUserStore = defineStore('userStore', () => {
       )
       console.log(res)
     } catch (e) {
-      console.log('Logout Successful', e.response?.data)
+      console.log('Logout Error', e.response?.data)
     }
     // Remove from localStorage
     localStorage.removeItem('token')
@@ -56,11 +56,26 @@ export const useUserStore = defineStore('userStore', () => {
     delete axios.defaults.headers.common['Authorization']
   }
 
+  const fetchUser = async () => {
+    //it is stop if already one time ajax load so not again call without relaod page
+    if (user.value) {
+      return
+    }
+    try {
+      const res = await axios.get('api/user')
+      console.log(res.data)
+      user.value = res.data
+    } catch (e) {
+      console.log('Data is not Fetch', e)
+    }
+  }
+
   return {
     user,
     token,
     registerUser,
     loginUser,
     logout,
+    fetchUser,
   }
 })
