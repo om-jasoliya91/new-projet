@@ -5,7 +5,7 @@ import axios from 'axios'
 export const useUserStore = defineStore('userStore', () => {
   const user = ref(null)
   const token = ref(localStorage.getItem('token') || null)
-
+  const courses = ref([])
   const registerUser = async (formData) => {
     try {
       const res = await axios.post('api/register', formData)
@@ -70,12 +70,47 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
+  const fetchCourse = async () => {
+    if (courses.value.length === 0) {
+      try {
+        const res = await axios.get('api/allCourse')
+        console.log(res.data)
+        courses.value = res.data.data
+      } catch (e) {
+        console.log('errr', e)
+      }
+    }
+  }
+
+  const updateUser = async (formData) => {
+    try {
+      const res = await axios.post('api/update-profile', formData, {
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+
+      user.value = res.data // update Pinia
+
+      return { success: true, data: res.data }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data || 'Update failed',
+      }
+    }
+  }
+
   return {
     user,
     token,
+    courses,
     registerUser,
     loginUser,
     logout,
     fetchUser,
+    fetchCourse,
+    updateUser,
   }
 })

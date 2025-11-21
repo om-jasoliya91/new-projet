@@ -1,32 +1,75 @@
 <script setup>
 import HeaderComponent from '@/components/layouts/HeaderComponent.vue'
 import { useUserStore } from '@/stores/userStore'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+
 const auth = useUserStore()
+const showEdit = ref(false)
 
-onMounted(() => {
-  auth.fetchUser()
-  // console.log(auth.fetchUser())
-
-  // console.log(auth.fetchUser())
+const form = ref({
+  name: '',
+  email: '',
+  age: '',
+  city: '',
+  address: '',
+  profile_pic: null,
 })
+
+onMounted(async () => {
+  await auth.fetchUser()
+
+  if (auth.user?.data) {
+    form.value = {
+      name: auth.user.data.name,
+      email: auth.user.data.email,
+      age: auth.user.data.age,
+      city: auth.user.data.city,
+      address: auth.user.data.address,
+      profile_pic: null,
+    }
+  }
+})
+
+function handleImage(e) {
+  form.value.profile_pic = e.target.files[0]
+}
+
+async function updateProfile() {
+  const fd = new FormData()
+  fd.append('name', form.value.name)
+  fd.append('email', form.value.email)
+  fd.append('age', form.value.age)
+  fd.append('city', form.value.city)
+  fd.append('address', form.value.address)
+
+  if (form.value.profile_pic) {
+    fd.append('profile_pic', form.value.profile_pic)
+  }
+
+  const res = await auth.updateUser(fd)
+
+  if (res.success) {
+    auth.user = res.data // or auth.user = res.data.data depending on your API
+    showEdit.value = false
+  }
+}
 </script>
+
 <template>
-  <HeaderComponent></HeaderComponent>
+  <HeaderComponent />
+
   <div class="container my-5 d-flex justify-content-center">
     <div class="border-2 border-dark shadow-sm p-4 rounded" style="width: 500px">
       <h1 class="text-center text-primary mb-4">Profile Page</h1>
-
+      <!-- :src="`/storage/uploads/${auth.user.data.profile_pic.split('/').pop()}`" -->
       <!-- Profile Image -->
       <div class="mb-3 d-flex justify-content-center">
         <img
-          class="rounded-circle shadow-sm"
+          class="rounded-circle"
           v-if="auth.user?.data?.profile_pic"
-          :src="auth.user?.data?.profile_pic"
+          :src="`/storage/uploads/${auth.user.data.profile_pic.split('/').pop()}`"
           width="150"
           height="150"
-          alt="Profile Picture"
-          style="object-fit: cover"
         />
       </div>
 
@@ -50,8 +93,70 @@ onMounted(() => {
       <div class="text-center mb-2">
         <p><strong>Address:</strong> {{ auth.user?.data?.address }}</p>
       </div>
+
+      <div class="text-center mt-3">
+        <button class="btn btn-primary" @click="showEdit = true">Update Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT MODAL -->
+  <div v-if="showEdit" class="modal-backdrop">
+    <div class="modal-box shadow-lg p-4 rounded bg-white">
+      <h3 class="text-center mb-3">Update Profile</h3>
+
+      <div class="mb-2">
+        <label>Name</label>
+        <input class="form-control" v-model="form.name" />
+      </div>
+
+      <div class="mb-2">
+        <label>Email</label>
+        <input class="form-control" v-model="form.email" disabled />
+      </div>
+
+      <div class="mb-2">
+        <label>Age</label>
+        <input class="form-control" v-model="form.age" />
+      </div>
+
+      <div class="mb-2">
+        <label>City</label>
+        <input class="form-control" v-model="form.city" />
+      </div>
+
+      <div class="mb-2">
+        <label>Address</label>
+        <input class="form-control" v-model="form.address" />
+      </div>
+
+      <div class="mb-3">
+        <label>Profile Picture</label>
+        <input type="file" class="form-control" @change="handleImage" />
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <button class="btn btn-secondary" @click="showEdit = false">Cancel</button>
+        <button class="btn btn-success" @click="updateProfile">Save Changes</button>
+      </div>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-box {
+  width: 400px;
+}
+</style>
