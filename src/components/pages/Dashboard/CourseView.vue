@@ -2,10 +2,37 @@
 import { onMounted } from 'vue'
 import HeaderComponent from '@/components/layouts/HeaderComponent.vue'
 import { useUserStore } from '@/stores/userStore'
+import Swal from 'sweetalert2'
 const auth = useUserStore()
+const courses = auth.courses
 onMounted(() => {
   auth.fetchCourse()
 })
+async function applyCourse(courseId) {
+  const res = await auth.enrollCourse(courseId)
+
+  if (res.success) {
+    // Find the course and update its applied state
+    const index = courses.value.findIndex((c) => c.id === courseId)
+    if (index !== -1) {
+      courses.value[index].is_applied = true //  this changes text + disables button
+    }
+
+    Swal.fire({
+      icon: 'success',
+      title: res.message,
+      toast: true,
+      position: 'top-end',
+      timer: 2000,
+      showConfirmButton: false,
+    })
+  } else {
+    Swal.fire({
+      icon: 'warning',
+      title: res.message,
+    })
+  }
+}
 </script>
 <template>
   <HeaderComponent></HeaderComponent>
@@ -37,7 +64,19 @@ onMounted(() => {
               </li>
             </ul>
             <div class="d-flex justify-content-center">
-              <button class="btn btn-primary">Apply</button>
+              <button
+                :disabled="course.is_applied || course.status === 'inactive'"
+                class="btn btn-primary"
+                @click="applyCourse(course.id)"
+              >
+                {{
+                  course.status === 'inactive'
+                    ? 'Inactive'
+                    : course.is_applied
+                      ? 'Applied'
+                      : 'Apply Now'
+                }}
+              </button>
             </div>
           </div>
         </div>

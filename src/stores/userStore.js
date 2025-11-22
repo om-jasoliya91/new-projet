@@ -108,6 +108,18 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
+  const enrollCourse = async (courseId) => {
+    try {
+      const res = await axios.post('api/enroll', { course_id: courseId })
+      return { success: true, message: res.data.message }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Something went wrong',
+      }
+    }
+  }
+
   // UPDATE USER PROFILE
   const updateUser = async (formData) => {
     try {
@@ -161,5 +173,6 @@ export const useUserStore = defineStore('userStore', () => {
     fetchCourse,
     updateUser,
     deleteAccount,
+    enrollCourse,
   }
 })
