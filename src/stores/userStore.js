@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
+import Swal from 'sweetalert2'
 
 // ------------------ GLOBAL AXIOS SETTINGS ------------------
 axios.defaults.baseURL = import.meta.env.VITE_API_URL
@@ -38,7 +39,13 @@ export const useUserStore = defineStore('userStore', () => {
   const loginUser = async (credentials) => {
     try {
       const res = await axios.post('api/login', credentials)
-
+      Swal.fire({
+        title: 'Login Successgully ',
+        text: 'Welcome Back',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false,
+      })
       token.value = res.data.token
       user.value = res.data.user
 
@@ -46,10 +53,15 @@ export const useUserStore = defineStore('userStore', () => {
 
       return { success: true, data: res.data }
     } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data || 'Login failed',
-      }
+      Swal.fire({
+        title: 'Login Faild',
+        text: error.response?.data?.message || 'Please Check Your Credentials',
+        icon: 'error',
+      })
+      // return {
+      //   success: false,
+      //   error: error.response?.data || 'Login failed',
+      // }
     }
   }
 
@@ -121,6 +133,23 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
+  //Delete User Account
+  const deleteAccount = async () => {
+    try {
+      const res = await axios.delete('api/delete-user-account')
+      // clear pinia + token
+      user.value = null
+      token.value = null
+      localStorage.removeItem('token')
+      return { success: true, data: res.data }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data,
+      }
+    }
+  }
+
   return {
     user,
     token,
@@ -131,5 +160,6 @@ export const useUserStore = defineStore('userStore', () => {
     fetchUser,
     fetchCourse,
     updateUser,
+    deleteAccount,
   }
 })

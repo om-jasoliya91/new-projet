@@ -2,7 +2,9 @@
 import HeaderComponent from '@/components/layouts/HeaderComponent.vue'
 import { useUserStore } from '@/stores/userStore'
 import { onMounted, ref } from 'vue'
-
+import Swal from 'sweetalert2'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const auth = useUserStore()
 const showEdit = ref(false)
 
@@ -49,9 +51,49 @@ async function updateProfile() {
   const res = await auth.updateUser(fd)
 
   if (res.success) {
-    auth.user = res.data.data // or auth.user = res.data.data depending on your API
+    // Update Pinia state – UI will refresh automatically
+    auth.user = res.data
+
+    // Toast success message
+    Swal.fire({
+      icon: 'success',
+      title: 'Profile Updated Successfully 🎉',
+      toast: true,
+      position: 'top-end',
+      timer: 2000,
+      showConfirmButton: false,
+    })
+
+    // Close modal
     showEdit.value = false
   }
+}
+function handleDelete() {
+  Swal.fire({
+    title: 'Are you sure you want to delete your account?',
+    text: 'This action cannot be undone!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, Delete',
+    cancelButtonText: 'Cancel',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const res = await auth.deleteAccount()
+
+      if (res.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Account Deleted Successfully',
+          toast: true,
+          position: 'top-end',
+          timer: 2000,
+          showConfirmButton: false,
+        })
+
+        router.push('/login')
+      }
+    }
+  })
 }
 </script>
 
@@ -96,6 +138,7 @@ async function updateProfile() {
 
       <div class="text-center mt-3">
         <button class="btn btn-primary" @click="showEdit = true">Update Profile</button>
+        <button class="btn btn-danger mx-2" @click="handleDelete">Delete Account</button>
       </div>
     </div>
   </div>

@@ -53,17 +53,30 @@
 <script setup>
 import { useUserStore } from '@/stores/userStore'
 import { useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
 const auth = useUserStore()
 const router = useRouter()
 
 function handleLogout() {
-  const confirmLogout = confirm('Are You Sure you want to logout')
-
-  if (!confirmLogout) {
-    return
-  }
-  auth.logout()
-  router.push('/login')
+  Swal.fire({
+    title: 'Are You Sure You Want To Logout',
+    text: 'You will need to login again to access your account',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes,Logout',
+    cancelButtonText: 'Cancel',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      await auth.logout() //call  pinia logout
+      Swal.fire({
+        title: 'Logged Out Successfully',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false,
+      })
+      router.push('/login')
+    }
+  })
 }
 </script>
 <style scoped></style>

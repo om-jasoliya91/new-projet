@@ -32,7 +32,6 @@ const submitLogin = handleSubmit(async () => {
   const result = await userStore.loginUser(credentials)
 
   if (result.success) {
-    alert('Login Successful!')
     resetForm()
     router.push('/home') // redirect after login
   } else {

@@ -3,6 +3,7 @@ import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { useUserStore } from '@/stores/userStore'
 import { useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -62,12 +63,24 @@ const submitForm = handleSubmit(async () => {
   const result = await userStore.registerUser(formData)
 
   if (result.success) {
-    alert('User Registered Successfully!')
+    Swal.fire({
+      icon: 'success',
+      title: 'User Registerd Successfully',
+      toast: true,
+      position: 'top-end',
+      timer: 2000,
+      showConfirmButton: false,
+    })
     resetForm()
     router.push('/login')
   } else {
+    Swal.fire({
+      title: 'User Already Registerd.',
+      text: 'try again',
+      icon: 'error',
+      timer: 2000,
+    })
     console.log('API Validation Errors:', result.error)
-    alert('Something went wrong!')
   }
 })
 </script>
