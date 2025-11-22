@@ -2,10 +2,26 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
 
+// ------------------ GLOBAL AXIOS SETTINGS ------------------
+axios.defaults.baseURL = import.meta.env.VITE_API_URL
+
+// This adds Authorization Bearer token automatically on every request
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
+// -----------------------------------------------------------
+
 export const useUserStore = defineStore('userStore', () => {
   const user = ref(null)
   const token = ref(localStorage.getItem('token') || null)
   const courses = ref([])
+
+  // REGISTER
   const registerUser = async (formData) => {
     try {
       const res = await axios.post('api/register', formData)
@@ -18,11 +34,11 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
+  // LOGIN
   const loginUser = async (credentials) => {
     try {
       const res = await axios.post('api/login', credentials)
 
-      // Save token
       token.value = res.data.token
       user.value = res.data.user
 
@@ -37,63 +53,66 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
+  // LOGOUT
   const logout = async () => {
     try {
-      const res = await axios.post(
-        'api/logout',
-        {},
-        { headers: { Authorization: `Bearer ${token.value}` } },
-      )
-      console.log(res)
+      await axios.post('api/logout') // token automatically added by interceptor
     } catch (e) {
-      console.log('Logout Error', e.response?.data)
+      console.log('Logout Error:', e.response?.data)
     }
-    // Remove from localStorage
-    localStorage.removeItem('token')
+
     user.value = null
     token.value = null
-    // Remove axios default Authorization header
-    delete axios.defaults.headers.common['Authorization']
+    localStorage.removeItem('token')
   }
 
+  // FETCH LOGGED USER
   const fetchUser = async () => {
-    //it is stop if already one time ajax load so not again call without relaod page
+    // If user is already loaded → do NOT call API again
     if (user.value) {
       return
     }
+
     try {
       const res = await axios.get('api/user')
-      console.log(res.data)
       user.value = res.data
     } catch (e) {
-      console.log('Data is not Fetch', e)
+      console.log('User fetch failed:', e)
     }
   }
 
+  // FETCH ALL COURSES
   const fetchCourse = async () => {
-    if (courses.value.length === 0) {
-      try {
-        const res = await axios.get('api/allCourse')
-        console.log(res.data)
-        courses.value = res.data.data
-      } catch (e) {
-        console.log('errr', e)
-      }
+    // If already loaded → do NOT call API again
+    if (courses.value.length > 0) {
+      return
+    }
+
+    try {
+      const res = await axios.get('api/allCourse')
+      courses.value = res.data.data
+    } catch (e) {
+      console.log('Course fetch failed:', e)
     }
   }
 
+  // UPDATE USER PROFILE
   const updateUser = async (formData) => {
     try {
       const res = await axios.post('api/update-profile', formData, {
-        headers: {
-          Authorization: `Bearer ${token.value}`,
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       })
 
-      user.value = res.data // update Pinia
+      // Always check if API returned data
+      if (res.data?.data) {
+        user.value = { data: res.data.data } // Update Pinia store instantly
+      }
 
-      return { success: true, data: res.data }
+      return {
+        success: true,
+        message: res.data.message ?? 'Profile updated successfully',
+        data: res.data.data,
+      }
     } catch (error) {
       return {
         success: false,

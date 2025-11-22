@@ -14,13 +14,12 @@ app.use(router)
 
 // Set base API URL (optional)
 // meta:It is an object created by JavaScript (ES modules) that gives information about the current file/module.
-axios.defaults.baseURL = import.meta.env.VITE_API_URL
-console.log(import.meta.env.VITE_API_URL)
-
-const token = localStorage.getItem('token')
-//check if token available so Bearer token Checked
-if (token) {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-}
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
 
 app.mount('#app')

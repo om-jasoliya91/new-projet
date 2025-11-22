@@ -49,7 +49,7 @@ async function updateProfile() {
   const res = await auth.updateUser(fd)
 
   if (res.success) {
-    auth.user = res.data // or auth.user = res.data.data depending on your API
+    auth.user = res.data.data // or auth.user = res.data.data depending on your API
     showEdit.value = false
   }
 }
@@ -65,9 +65,9 @@ async function updateProfile() {
       <!-- Profile Image -->
       <div class="mb-3 d-flex justify-content-center">
         <img
-          class="rounded-circle"
           v-if="auth.user?.data?.profile_pic"
-          :src="`/storage/uploads/${auth.user.data.profile_pic.split('/').pop()}`"
+          :src="auth.user.data.profile_pic"
+          class="rounded-circle"
           width="150"
           height="150"
         />
