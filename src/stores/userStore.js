@@ -15,8 +15,6 @@ axios.interceptors.request.use((config) => {
   return config
 })
 
-// -----------------------------------------------------------
-
 export const useUserStore = defineStore('userStore', () => {
   const user = ref(null)
   const token = ref(localStorage.getItem('token') || null)
@@ -121,15 +119,19 @@ export const useUserStore = defineStore('userStore', () => {
   }
 
   // UPDATE USER PROFILE
+  // UPDATE USER PROFILE
   const updateUser = async (formData) => {
     try {
       const res = await axios.post('api/update-profile', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
 
-      // Always check if API returned data
       if (res.data?.data) {
-        user.value = { data: res.data.data } // Update Pinia store instantly
+        user.value = { data: res.data.data } // correct structure
+        localStorage.setItem(
+          'user',
+          JSON.stringify({ data: res.data.data }), //  save for refresh
+        )
       }
 
       return {

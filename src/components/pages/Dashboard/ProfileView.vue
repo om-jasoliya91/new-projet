@@ -51,10 +51,10 @@ async function updateProfile() {
   const res = await auth.updateUser(fd)
 
   if (res.success) {
-    // Update Pinia state – UI will refresh automatically
-    auth.user = res.data
+    // Update Pinia + LocalStorage properly
+    auth.user = { data: res.data }
+    // localStorage.setItem('user', JSON.stringify({ data: res.data }))
 
-    // Toast success message
     Swal.fire({
       icon: 'success',
       title: 'Profile Updated Successfully 🎉',
@@ -64,7 +64,6 @@ async function updateProfile() {
       showConfirmButton: false,
     })
 
-    // Close modal
     showEdit.value = false
   }
 }

@@ -4,7 +4,7 @@ import HeaderComponent from '@/components/layouts/HeaderComponent.vue'
 import { useUserStore } from '@/stores/userStore'
 import Swal from 'sweetalert2'
 const auth = useUserStore()
-const courses = auth.courses
+// const courses = auth.courses
 onMounted(() => {
   auth.fetchCourse()
 })
@@ -13,10 +13,10 @@ async function applyCourse(courseId) {
 
   if (res.success) {
     // Find the course and update its applied state
-    const index = courses.value.findIndex((c) => c.id === courseId)
-    if (index !== -1) {
-      courses.value[index].is_applied = true //  this changes text + disables button
-    }
+    // const index = courses.value.findIndex((c) => c.id === courseId)
+    // if (index !== -1) {
+    // courses.value[index].is_applied = true //  this changes text + disables button
+    // }
 
     Swal.fire({
       icon: 'success',
