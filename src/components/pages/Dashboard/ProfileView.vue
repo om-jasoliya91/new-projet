@@ -1,4 +1,5 @@
 <script setup>
+import ActionButtons from '@/components/common/ActionButtons.vue'
 import HeaderComponent from '@/components/layouts/HeaderComponent.vue'
 import { useUserStore } from '@/stores/userStore'
 import { onMounted, ref } from 'vue'
@@ -136,8 +137,15 @@ function handleDelete() {
       </div>
 
       <div class="text-center mt-3">
-        <button class="btn btn-primary" @click="showEdit = true">Update Profile</button>
-        <button class="btn btn-danger mx-2" @click="handleDelete">Delete Account</button>
+        <ActionButtons>
+          <template #update>
+            <button class="btn btn-primary" @click="showEdit = true">Update Profile</button>
+          </template>
+
+          <template #delete>
+            <button class="btn btn-danger mx-2" @click="handleDelete">Delete Account</button>
+          </template>
+        </ActionButtons>
       </div>
     </div>
   </div>
