@@ -5,6 +5,10 @@ import { useUserStore } from '@/stores/userStore'
 import { onMounted, ref } from 'vue'
 import Swal from 'sweetalert2'
 import { useRouter } from 'vue-router'
+import NotificationList from '@/components/layouts/NotificationList.vue'
+import { useNotificationStore } from '@/stores/notificationStore'
+const notificationStore = useNotificationStore()
+
 const router = useRouter()
 const auth = useUserStore()
 const showEdit = ref(false)
@@ -20,7 +24,7 @@ const form = ref({
 
 onMounted(async () => {
   await auth.fetchUser()
-
+  await notificationStore.fetchNotifications() //  FETCH NOTIFICATIONS HERE
   if (auth.user?.data) {
     form.value = {
       name: auth.user.data.name,
@@ -148,6 +152,13 @@ function handleDelete() {
         </ActionButtons>
       </div>
     </div>
+  </div>
+  <div class="my-4 border p-3 rounded shadow-sm">
+    <h4 class="text-center mb-3">Notifications</h4>
+    <NotificationList
+      :notifications="notificationStore.notifications"
+      @mark-read="notificationStore.markAsRead"
+    />
   </div>
 
   <!-- EDIT MODAL -->
