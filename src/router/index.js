@@ -4,6 +4,7 @@ import LoginView from '@/components/pages/LoginView.vue'
 import HomeView from '@/components/pages/Dashboard/HomeView.vue'
 import ProfileView from '@/components/pages/Dashboard/ProfileView.vue'
 import CourseView from '@/components/pages/Dashboard/CourseView.vue'
+import SlotView from '@/components/practiseview/SlotView.vue'
 
 const routes = [
   { path: '/', name: 'register', component: RegisterView },
@@ -11,6 +12,9 @@ const routes = [
   { path: '/home', name: 'home', component: HomeView, meta: { requiresAuth: true } },
   { path: '/profile', name: 'profile', component: ProfileView, meta: { requiresAuth: true } },
   { path: '/course', name: 'course', component: CourseView, meta: { requiresAuth: true } },
+
+  //this routes for prcatise
+  { path: '/slotView', name: 'slot', component: SlotView },
 ]
 
 const router = createRouter({
