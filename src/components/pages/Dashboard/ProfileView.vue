@@ -2,13 +2,14 @@
 import ActionButtons from '@/components/common/ActionButtons.vue'
 import HeaderComponent from '@/components/layouts/HeaderComponent.vue'
 import { useUserStore } from '@/stores/userStore'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import Swal from 'sweetalert2'
 import { useRouter } from 'vue-router'
 import NotificationList from '@/components/layouts/NotificationList.vue'
 import { useNotificationStore } from '@/stores/notificationStore'
-const notificationStore = useNotificationStore()
+import * as yup from 'yup'
 
+const notificationStore = useNotificationStore()
 const router = useRouter()
 const auth = useUserStore()
 const showEdit = ref(false)
@@ -22,9 +23,39 @@ const form = ref({
   profile_pic: null,
 })
 
+// Yup schema
+const profileSchema = yup.object({
+  name: yup.string().required('Name is required'),
+  email: yup.string().email().required('Email is required'),
+  age: yup.number().typeError('Age must be number').required('Age is required'),
+  city: yup.string().required('City is required'),
+  address: yup.string().required('Address is required'),
+})
+
+const formErrors = ref({})
+
+// Validate on every change
+const validateForm = async () => {
+  try {
+    await profileSchema.validate(form.value, { abortEarly: false })
+    formErrors.value = {}
+    return true
+  } catch (err) {
+    const errors = {}
+    err.inner.forEach((e) => (errors[e.path] = e.message))
+    formErrors.value = errors
+    return false
+  }
+}
+
+const isFormValid = computed(async () => await validateForm())
+
+watch(form, () => validateForm(), { deep: true })
+
 onMounted(async () => {
   await auth.fetchUser()
-  await notificationStore.fetchNotifications() //  FETCH NOTIFICATIONS HERE
+  await notificationStore.fetchNotifications()
+
   if (auth.user?.data) {
     form.value = {
       name: auth.user.data.name,
@@ -42,23 +73,20 @@ function handleImage(e) {
 }
 
 async function updateProfile() {
+  if (!(await validateForm())) return
+
   const fd = new FormData()
   fd.append('name', form.value.name)
   fd.append('email', form.value.email)
   fd.append('age', form.value.age)
   fd.append('city', form.value.city)
   fd.append('address', form.value.address)
-
-  if (form.value.profile_pic) {
-    fd.append('profile_pic', form.value.profile_pic)
-  }
+  if (form.value.profile_pic) fd.append('profile_pic', form.value.profile_pic)
 
   const res = await auth.updateUser(fd)
 
   if (res.success) {
-    // Update Pinia + LocalStorage properly
     auth.user = { data: res.data }
-    // localStorage.setItem('user', JSON.stringify({ data: res.data }))
 
     Swal.fire({
       icon: 'success',
@@ -72,6 +100,7 @@ async function updateProfile() {
     showEdit.value = false
   }
 }
+
 function handleDelete() {
   Swal.fire({
     title: 'Are you sure you want to delete your account?',
@@ -93,7 +122,6 @@ function handleDelete() {
           timer: 2000,
           showConfirmButton: false,
         })
-
         router.push('/login')
       }
     }
@@ -169,6 +197,7 @@ function handleDelete() {
       <div class="mb-2">
         <label>Name</label>
         <input class="form-control" v-model="form.name" />
+        <small class="text-danger">{{ formErrors.name }}</small>
       </div>
 
       <div class="mb-2">
@@ -179,16 +208,19 @@ function handleDelete() {
       <div class="mb-2">
         <label>Age</label>
         <input class="form-control" v-model="form.age" />
+        <small class="text-danger">{{ formErrors.age }}</small>
       </div>
 
       <div class="mb-2">
         <label>City</label>
         <input class="form-control" v-model="form.city" />
+        <small class="text-danger">{{ formErrors.city }}</small>
       </div>
 
       <div class="mb-2">
         <label>Address</label>
         <input class="form-control" v-model="form.address" />
+        <small class="text-danger">{{ formErrors.address }}</small>
       </div>
 
       <div class="mb-3">
@@ -198,7 +230,14 @@ function handleDelete() {
 
       <div class="d-flex justify-content-between">
         <button class="btn btn-secondary" @click="showEdit = false">Cancel</button>
-        <button class="btn btn-success" @click="updateProfile">Save Changes</button>
+
+        <button
+          class="btn btn-success"
+          @click="updateProfile"
+          :disabled="Object.keys(formErrors).length > 0"
+        >
+          Save Changes
+        </button>
       </div>
     </div>
   </div>

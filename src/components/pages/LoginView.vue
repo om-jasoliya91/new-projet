@@ -67,6 +67,8 @@ const submitLogin = handleSubmit(async () => {
       <button type="submit" class="btn btn-primary w-100">Login</button>
       <div class="mb-3 text-center">
         <router-link to="/">Create New Account? Register here</router-link>
+        <br />
+        <router-link to="/forgot">Forgot Password</router-link>
       </div>
     </form>
   </div>

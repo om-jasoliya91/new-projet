@@ -5,6 +5,8 @@ import HomeView from '@/components/pages/Dashboard/HomeView.vue'
 import ProfileView from '@/components/pages/Dashboard/ProfileView.vue'
 import CourseView from '@/components/pages/Dashboard/CourseView.vue'
 import SlotView from '@/components/practiseview/SlotView.vue'
+import ForgotPassword from '@/components/pages/Dashboard/ForgotPassword.vue'
+import ResetPassword from '@/components/pages/Dashboard/ResetPassword.vue'
 
 const routes = [
   { path: '/', name: 'register', component: RegisterView },
@@ -12,6 +14,9 @@ const routes = [
   { path: '/home', name: 'home', component: HomeView, meta: { requiresAuth: true } },
   { path: '/profile', name: 'profile', component: ProfileView, meta: { requiresAuth: true } },
   { path: '/course', name: 'course', component: CourseView, meta: { requiresAuth: true } },
+  { path: '/course', name: 'course', component: CourseView, meta: { requiresAuth: true } },
+  { path: '/forgot', name: 'forgot', component: ForgotPassword },
+  { path: '/reset', name: 'reset', component: ResetPassword },
 
   //this routes for prcatise
   { path: '/slotView', name: 'slot', component: SlotView },
