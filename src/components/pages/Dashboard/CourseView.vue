@@ -4,6 +4,7 @@ import { useUserStore } from '@/stores/userStore'
 import Swal from 'sweetalert2'
 import CoursesComponent from '@/components/course/CoursesComponent.vue'
 import HeaderComponent from '@/components/layouts/HeaderComponent.vue'
+import FooterComponent from '@/components/layouts/FooterComponent.vue'
 
 const auth = useUserStore()
 
@@ -37,4 +38,5 @@ async function applyCourse(courseId) {
 <template>
   <HeaderComponent />
   <CoursesComponent :courses="auth.courses" @apply="applyCourse" />
+  <FooterComponent />
 </template>

@@ -1,6 +1,7 @@
 <script setup>
 import ActionButtons from '@/components/common/ActionButtons.vue'
 import HeaderComponent from '@/components/layouts/HeaderComponent.vue'
+import FooterComponent from '@/components/layouts/FooterComponent.vue'
 import { useUserStore } from '@/stores/userStore'
 import { onMounted, ref, computed, watch } from 'vue'
 import Swal from 'sweetalert2'
@@ -241,6 +242,7 @@ function handleDelete() {
       </div>
     </div>
   </div>
+  <FooterComponent></FooterComponent>
 </template>
 
 <style scoped>

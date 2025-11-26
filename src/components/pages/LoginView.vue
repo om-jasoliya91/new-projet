@@ -41,36 +41,44 @@ const submitLogin = handleSubmit(async () => {
 </script>
 
 <template>
-  <div class="container my-5" style="width: 500px">
-    <h1 class="text-primary text-center">Login</h1>
+  <div class="d-flex justify-content-center align-items-center my-5">
+    <div class="card shadow-lg p-4" style="width: 450px; border-radius: 15px">
+      <h2 class="text-center text-primary mb-4">Login</h2>
 
-    <form @submit.prevent="submitLogin">
-      <!-- Email -->
-      <div class="mb-3">
-        <label>Email:</label>
-        <input v-model="email" class="form-control" type="email" placeholder="Enter email" />
-        <small class="text-danger">{{ emailError }}</small>
-      </div>
+      <form @submit.prevent="submitLogin">
+        <!-- Email -->
+        <div class="mb-3">
+          <label class="form-label">Email:</label>
+          <input
+            v-model="email"
+            class="form-control"
+            type="email"
+            placeholder="Enter email"
+          />
+          <small class="text-danger">{{ emailError }}</small>
+        </div>
 
-      <!-- Password -->
-      <div class="mb-3">
-        <label>Password:</label>
-        <input
-          v-model="password"
-          class="form-control"
-          type="password"
-          placeholder="Enter password"
-        />
-        <small class="text-danger">{{ passwordError }}</small>
-      </div>
+        <!-- Password -->
+        <div class="mb-3">
+          <label class="form-label">Password:</label>
+          <input
+            v-model="password"
+            class="form-control"
+            type="password"
+            placeholder="Enter password"
+          />
+          <small class="text-danger">{{ passwordError }}</small>
+        </div>
 
-      <button type="submit" class="btn btn-primary w-100">Login</button>
-      <div class="mb-3 text-center">
-        <router-link to="/">Create New Account? Register here</router-link>
-        <br />
-        <router-link to="/forgot">Forgot Password</router-link>
-      </div>
-    </form>
+        <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+
+        <div class="text-center">
+          <router-link to="/">Create New Account? Register here</router-link>
+          <br />
+          <router-link to="/forgot">Forgot Password?</router-link>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 

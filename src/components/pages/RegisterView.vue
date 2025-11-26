@@ -51,14 +51,14 @@ const submitForm = handleSubmit(async () => {
   // to the server using axios, fetch, etc.
   const formData = new FormData()
 
-  formData.append('name', name.value)
-  formData.append('email', email.value)
-  formData.append('age', age.value)
-  formData.append('city', city.value)
-  formData.append('address', address.value)
-  formData.append('password', password.value)
-  formData.append('password_confirmation', password.value)
-  formData.append('profile_pic', profile_pic.value)
+  // formData.append('name', name.value)
+  // formData.append('email', email.value)
+  // formData.append('age', age.value)
+  // formData.append('city', city.value)
+  // formData.append('address', address.value)
+  // formData.append('password', password.value)
+  // formData.append('password_confirmation', password.value)
+  // formData.append('profile_pic', profile_pic.value)
 
   const result = await userStore.registerUser(formData)
 
@@ -86,66 +86,70 @@ const submitForm = handleSubmit(async () => {
 </script>
 
 <template>
-  <div class="container my-5" style="width: 500px">
-    <h1 class="text-primary text-center">Register</h1>
+  <div class="d-flex justify-content-center align-items-center my-5">
+    <div class="card shadow-lg p-4" style="width: 450px; border-radius: 15px">
+      <h2 class="text-center text-primary mb-4">Register</h2>
 
-    <form @submit.prevent="submitForm">
-      <!-- NAME -->
-      <div class="mb-3">
-        <label>Name:</label>
-        <input v-model="name" class="form-control" type="text" />
-        <small class="text-danger">{{ nameError }}</small>
-      </div>
+      <form @submit.prevent="submitForm">
+        <!-- NAME -->
+        <div class="mb-3">
+          <label class="form-label">Name:</label>
+          <input v-model="name" class="form-control" type="text" />
+          <small class="text-danger">{{ nameError }}</small>
+        </div>
 
-      <!-- EMAIL -->
-      <div class="mb-3">
-        <label>Email:</label>
-        <input v-model="email" class="form-control" type="email" />
-        <small class="text-danger">{{ emailError }}</small>
-      </div>
+        <!-- EMAIL -->
+        <div class="mb-3">
+          <label class="form-label">Email:</label>
+          <input v-model="email" class="form-control" type="email" />
+          <small class="text-danger">{{ emailError }}</small>
+        </div>
 
-      <!-- AGE -->
-      <div class="mb-3">
-        <label>Age:</label>
-        <input v-model="age" class="form-control" type="number" />
-        <small class="text-danger">{{ ageError }}</small>
-      </div>
+        <!-- AGE -->
+        <div class="mb-3">
+          <label class="form-label">Age:</label>
+          <input v-model="age" class="form-control" type="number" />
+          <small class="text-danger">{{ ageError }}</small>
+        </div>
 
-      <!-- CITY -->
-      <div class="mb-3">
-        <label>City:</label>
-        <input v-model="city" class="form-control" type="text" />
-        <small class="text-danger">{{ cityError }}</small>
-      </div>
+        <!-- CITY -->
+        <div class="mb-3">
+          <label class="form-label">City:</label>
+          <input v-model="city" class="form-control" type="text" />
+          <small class="text-danger">{{ cityError }}</small>
+        </div>
 
-      <!-- ADDRESS -->
-      <div class="mb-3">
-        <label>Address:</label>
-        <textarea v-model="address" class="form-control"></textarea>
-        <small class="text-danger">{{ addressError }}</small>
-      </div>
+        <!-- ADDRESS -->
+        <div class="mb-3">
+          <label class="form-label">Address:</label>
+          <textarea v-model="address" class="form-control"></textarea>
+          <small class="text-danger">{{ addressError }}</small>
+        </div>
 
-      <!-- PASSWORD -->
-      <div class="mb-3">
-        <label>Password:</label>
-        <input v-model="password" class="form-control" type="password" />
-        <small class="text-danger">{{ passwordError }}</small>
-      </div>
+        <!-- PASSWORD -->
+        <div class="mb-3">
+          <label class="form-label">Password:</label>
+          <input v-model="password" class="form-control" type="password" />
+          <small class="text-danger">{{ passwordError }}</small>
+        </div>
 
-      <!-- FILE -->
-      <div class="mb-3">
-        <label>File:</label>
-        <input type="file" class="form-control" @change="handleFile" />
-        <small class="text-danger">{{ fileError }}</small>
-      </div>
+        <!-- FILE -->
+        <div class="mb-3">
+          <label class="form-label">Profile Picture:</label>
+          <input type="file" class="form-control" @change="handleFile" />
+          <small class="text-danger">{{ fileError }}</small>
+        </div>
 
-      <!-- SUBMIT -->
-      <button class="btn btn-primary w-100">Submit</button>
-      <div class="mb-3 text-center">
-        <router-link to="/login">Do You have Account? Login here</router-link>
-      </div>
-    </form>
+        <!-- SUBMIT -->
+        <button class="btn btn-primary w-100 mb-3">Submit</button>
+
+        <div class="text-center">
+          <router-link to="/login">Already have an account? Login</router-link>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
+
 
 <style scoped></style>
